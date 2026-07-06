@@ -1,0 +1,90 @@
+Script - Raciocínio Clínico
+
+plataforma web gamificada para estudo de processos da unidade básica de saúde para médicos
+
+telas:
+- boas vindas
+- inicial: informações básicas
+- tutorial
+- mapa principal: fase 1: comunidade + fase 2: ubs externa
+- mapa extra: fase 3:ubs interna
+
+telas a partir do mapa:
+-- fase 1:
+- rua de acesso
+- centro comunitário
+- casa da dona maria
+- condomínio 
+
+-- fase 2:
+- entrada da unidade
+- placa da ubs
+- porta de entrada
+- ambulância
+
+-- fase 3:
+- recepção
+- sala de triagem
+- consultório medico
+- anamnese
+
+fluxo:
+boas vindas -> inicial -> 
+mapa principal
+fase 1: rua de acesso -> centro comunitário -> cada da dona maria -> condomínio ->
+fase 2: entrada da unidade -> placa da ubs -> ambulância ->
+mapa extra 
+fase 3: recepção -> sala de triagem -> consultório -> anamnese ->
+mapa principal
+
+mapa principal:
+_____________________________________
+|          3                        |
+| 2[C*] - [P*][C] | [          ][A*]|
+|  [C ] - [C ][P] | [     U    ]    |
+| 1[P*] - [C ][C] | [[N*] *    ]    |
+|       -                 -         |
+|       *-----------------*         |
+|___________________________________|
+
+legenda:
+C = casa
+P = prédio pequeno
+U = unidade básica de saúde
+A = ambulância
+- = caminho percorrível
+N = placa ubs
+
+lógica do mapa principal:
+avatar do usuário percorre o caminho percorrível e interage com pontos do mapa com * mapa entrar em uma tela com cenário específico.
+é um mapa único que na metade esquerda, se encontra a fase 1: comunidade e na metade direita, a fase 2: ubs externa.
+visualmente o usuário vê um conjunto de casas e prédios e do lado esquerdo e um prédio de uma unidade básica de saúde do lado direito.
+a identidade visual do mapa tem referencia nos jogos de gameboy de pokemon.
+
+pontos de mudança de cenário (*):
+*-- que fica no caminho, na frente da área residencial: rua de acesso 
+1[P*]: centro comunitário
+2[C*]: casa da dona maria
+3[P*]: condomínio
+--* que fica no caminho, na frente da unidade básica de saúde: entrada da unidade
+[N*]: placa da ubs
+[A*]: ambulância
+
+mapa extra:
+__________________________
+|       |        |     a*|
+|   T*  |        |  M*   |
+|_______         ________|
+|           R*           |
+|________________________|
+
+legenda:
+R*: recepção
+T*: triagem
+M*: consultório medico
+a*: anamnese
+
+logica do mapa extra:
+mapa interno na unidade básica de saúde.
+nesse mapa, a movimentação é livre e os obstáculos são as paredes. 
+existem 4 pontos de mudança de tela para um cenário específico.

@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Press+Start+2P&display=swap');
+
+:root {
+  /* Paleta de Cores Retro Gameboy/Modern Hybrid */
+  --bg-dark: #0f172a;
+  --bg-card: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  
+  /* Cores Temáticas Retro */
+  --gameboy-green-light: #8bac0f;
+  --gameboy-green-dark: #306230;
+  --gameboy-screen: #9bbc0f;
+  --gameboy-screen-dark: #0f380f;
+  
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --locked: #64748b;
+  
+  /* Fontes */
+  --font-retro: 'Press Start 2P', monospace;
+  --font-sans: 'Inter', sans-serif;
+}
+
+/* Reset e Configurações Globais */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar Estilo Retro */
+::-webkit-scrollbar {
+  width: 12px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+  border-left: 4px solid var(--text-secondary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--text-secondary);
+  border: 3px solid var(--bg-dark);
+}
+
+/* Tipografia */
+h1, h2, h3, h4, .retro-text {
+  font-family: var(--font-retro);
+  line-height: 1.5;
+}
+
+/* Utilitários Retro */
+.pixel-borders {
+  border: 4px solid #fff;
+  outline: 4px solid #000;
+  box-shadow: 0 0 0 4px #fff, 0 0 0 8px #000;
+  image-rendering: pixelated;
+}
+
+.retro-container {
+  background-color: #000;
+  border: 4px solid #fff;
+  padding: 16px;
+  position: relative;
+  font-family: var(--font-retro);
+  font-size: 12px;
+  color: #fff;
+  image-rendering: pixelated;
+}
+
+.retro-container::before {
+  content: '';
+  position: absolute;
+  top: -8px; left: -8px; right: -8px; bottom: -8px;
+  border: 4px solid #000;
+  pointer-events: none;
+}
+
+/* Botão Retro Clássico */
+.retro-btn {
+  font-family: var(--font-retro);
+  font-size: 12px;
+  padding: 12px 18px;
+  background-color: #e2e8f0;
+  color: #0f172a;
+  border: 4px solid #000;
+  box-shadow: -4px 4px 0 0 #000;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.1s, box-shadow 0.1s;
+  image-rendering: pixelated;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.retro-btn:hover {
+  background-color: #cbd5e1;
+}
+
+.retro-btn:active {
+  transform: translate(-4px, 4px);
+  box-shadow: 0 0 0 0 #000;
+}
+
+.retro-btn.primary {
+  background-color: var(--gameboy-green-light);
+  color: var(--gameboy-screen-dark);
+}
+.retro-btn.primary:hover {
+  background-color: #9cd01a;
+}
+
+.retro-btn.disabled {
+  background-color: #64748b;
+  color: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: -4px 4px 0 0 #000;
+  transform: none;
+}
+
+/* Caixa de Diálogo Clássica Gameboy */
+.retro-dialog {
+  background-color: #000;
+  border: 4px solid #fff;
+  padding: 20px;
+  box-shadow: 0 0 0 4px #000;
+  font-family: var(--font-retro);
+  font-size: 14px;
+  line-height: 1.6;
+  color: #fff;
+  position: relative;
+  min-height: 120px;
+}
+
+.retro-dialog::after {
+  content: '';
+  position: absolute;
+  top: -8px; left: -8px; right: -8px; bottom: -8px;
+  border: 4px solid #000;
+  pointer-events: none;
+}
+
+/* Tela do Jogo Emulada */
+.gameboy-frame {
+  background: #cbd5e1;
+  border: 8px solid #64748b;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: inset 0 -10px 0 #475569, 0 10px 20px rgba(0,0,0,0.5);
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.gameboy-screen-wrapper {
+  background: var(--gameboy-screen-dark);
+  border: 12px solid #334155;
+  border-radius: 4px;
+  padding: 4px;
+}
+
+/* Transição de tela clássica */
+.screen-transition {
+  animation: fadeEffect 0.3s ease-in-out;
+}
+
+@keyframes fadeEffect {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
