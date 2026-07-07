@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGame, MAIN_MAP_GRID, SCENARIO_LABELS, SCENARIO_ORDER } from '../../context/GameContext';
 import { Controls } from './Controls';
-import { Lock, Check, Star, LogOut } from 'lucide-react';
+import { Lock, Check, Star, LogOut, ShieldAlert } from 'lucide-react';
 
 export const MainMap: React.FC = () => {
   const {
@@ -16,10 +16,9 @@ export const MainMap: React.FC = () => {
 
   const [dialogText, setDialogText] = useState<string>('Use as SETAS/WASD para andar. Aproxime-se dos pontos com "*" ou clique neles.');
 
-  // Configurar escuta do teclado para movimento
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Evitar rolagem de tela com as setas
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space'].includes(e.key)) {
         e.preventDefault();
       }
@@ -50,44 +49,40 @@ export const MainMap: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [movePlayerOnMainMap]);
 
-  // Verificar em qual ponto o jogador está pisando para atualizar o diálogo
+  // Context updates based on positioning
   useEffect(() => {
     const { x, y } = mainMapPlayerPos;
     
-    // Mapear posições para cenários
     if (x === 4 && y === 5) {
-      setDialogText('Você está na Rua de Acesso. Encoste ou clique para avaliar a comunidade.');
+      setDialogText('Você está na Rua de Acesso. Entre para avaliar a situação socioambiental da comunidade.');
     } else if (x === 2 && y === 3) {
-      setDialogText('Centro Comunitário. Local de reuniões locais.');
+      setDialogText('Centro Comunitário. Local do grupo de promoção e prevenção do NASF.');
     } else if (x === 2 && y === 2) {
-      setDialogText('Casa da Dona Maria. Lar de uma paciente querida.');
+      setDialogText('Casa da Dona Maria. Lar de uma idosa com polifarmácia e dificuldades de adesão.');
     } else if (x === 6 && y === 2) {
-      setDialogText('Condomínio Residencial. Muitos moradores residem aqui.');
-    } else if (x === 10 && y === 2) {
-      setDialogText('Entrada da Unidade Básica de Saúde.');
+      setDialogText('Condomínio Residencial. Local com alta densidade e relatos de surto de febre.');
+    } else if (x === 10 && y === 3) {
+      setDialogText('Entrada da Unidade Básica de Saúde. Inicie a acolhida dos pacientes.');
     } else if (x === 9 && y === 3) {
-      setDialogText('Placa oficial da Unidade Básica de Saúde.');
+      setDialogText('Placa oficial da UBS. Reflita sobre as diretrizes doutrinárias do SUS.');
     } else if (x === 12 && y === 2) {
-      setDialogText('Ambulância de resgate da UBS.');
+      setDialogText('Ambulância do SAMU. Paciente em emergência necessitando de estabilização.');
     } else if (x === 7 && y === 5) {
-      setDialogText('Portão da UBS. Divisa entre a Comunidade e a Área da Saúde.');
+      setDialogText('Portão de acesso à UBS. Divisão entre o território e a unidade física.');
     } else {
-      setDialogText('Navegue pelas ruas. Conclua a Comunidade (Fase 1) para abrir a UBS (Fase 2).');
+      setDialogText('Explore o mapa da cidade. Conclua os cenários da Comunidade (Fase 1) para abrir a UBS.');
     }
   }, [mainMapPlayerPos]);
 
-  // Checar se cenário está desbloqueado linearmente
   const isScenarioUnlocked = (id: string): boolean => {
     const idx = SCENARIO_ORDER.indexOf(id);
     if (idx === -1) return false;
-    if (idx === 0) return true; // Primeiro cenário sempre aberto
+    if (idx === 0) return true;
 
-    // O anterior deve estar concluído
     const prevScen = SCENARIO_ORDER[idx - 1];
     return completedScenarios.includes(prevScen);
   };
 
-  // Trata cliques diretos nos elementos
   const handleElementClick = (id: string) => {
     const details = SCENARIO_LABELS[id];
     if (!details) return;
@@ -98,7 +93,6 @@ export const MainMap: React.FC = () => {
     }
 
     if (!isScenarioUnlocked(id)) {
-      // Localizar qual está bloqueando
       const idx = SCENARIO_ORDER.indexOf(id);
       const pendingScen = SCENARIO_ORDER[idx - 1];
       const pendingTitle = SCENARIO_LABELS[pendingScen]?.title || pendingScen;
@@ -106,11 +100,9 @@ export const MainMap: React.FC = () => {
       return;
     }
 
-    // Se passou na validação, inicia o cenário
     enterScenario(id);
   };
 
-  // Renderizar o Grid de forma visual
   const renderGridCells = () => {
     const cells = [];
     for (let y = 0; y < 7; y++) {
@@ -118,183 +110,217 @@ export const MainMap: React.FC = () => {
         const isPath = MAIN_MAP_GRID[y][x] === 1;
         const isPlayer = mainMapPlayerPos.x === x && mainMapPlayerPos.y === y;
         
-        let cellClass = 'relative w-full aspect-square flex items-center justify-center border border-slate-800/10 ';
+        let cellClass = 'relative w-full aspect-square flex items-center justify-center border border-slate-900/30 ';
         let cellContent: React.ReactNode = null;
 
-        // Renderização dos Tipos de Terreno e Elementos
         if (isPath) {
-          cellClass += 'bg-[#e2e8f0]'; // Cor de asfalto/rua
+          cellClass += 'bg-slate-800/40 border-slate-700/20'; // Cyber path/road
           
-          // Divisória do Portão (Fase 1 / Fase 2)
+          // Gate Border Cell
           if (x === 7 && y === 5) {
-            cellClass += ' border-l-4 border-l-amber-800 border-r-4 border-r-amber-800 bg-[#cbd5e1]';
+            cellClass += ' border-l-2 border-r-2 border-cyan-500/30 bg-slate-900/70';
             if (unlockedPhase < 2) {
-              cellContent = <Lock size={12} className="text-red-500 animate-pulse" />;
+              cellContent = <Lock size={12} className="text-rose-500 animate-pulse" />;
             } else {
-              cellContent = <div className="text-[8px] font-bold text-emerald-600">OPEN</div>;
+              cellContent = <span className="text-[6px] font-retro text-emerald-400">OPEN</span>;
             }
           }
 
-          // Estrela da Rua de Acesso (x:4, y:5)
+          // Rua de Acesso Point (x:4, y:5)
           if (x === 4 && y === 5) {
             const isDone = completedScenarios.includes('rua-acesso');
             const isUnlocked = isScenarioUnlocked('rua-acesso');
             cellContent = (
               <div 
                 onClick={() => handleElementClick('rua-acesso')}
-                className={`cursor-pointer p-1 rounded-full ${isDone ? 'bg-emerald-600 text-white' : isUnlocked ? 'bg-yellow-500 text-black animate-bounce' : 'bg-gray-500 text-gray-300'}`}
+                className={`cursor-pointer p-1 rounded-full flex items-center justify-center transition-all ${
+                  isDone 
+                    ? 'bg-emerald-500/20 border border-emerald-500 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.3)]' 
+                    : isUnlocked 
+                      ? 'bg-cyan-500/20 border border-cyan-400 text-cyan-300 animate-bounce shadow-[0_0_12px_rgba(6,182,212,0.5)]' 
+                      : 'bg-slate-800 border border-slate-700 text-slate-500'
+                }`}
+                title="Acessar Rua de Acesso"
               >
-                {isDone ? <Check size={10} /> : <Star size={10} />}
+                {isDone ? <Check size={8} /> : <Star size={8} />}
               </div>
             );
           }
 
         } else {
-          // Obstáculo ou Elemento Estático
-          cellClass += 'bg-[#1e3a1e]'; // Grama de fundo escuro retro
+          // Obstacles - Replaced retro green with cyber matrix dark grid
+          cellClass += 'bg-[#0a0f1b] border-slate-950/40';
 
           // Casa da Dona Maria (x:2, y:1-2)
           if (x === 2 && y === 1) {
-            cellClass += ' bg-amber-700/80 border-t-4 border-l-4 border-r-4 border-amber-950 rounded-t';
-            cellContent = <div className="text-[8px] text-white font-bold">CASA</div>;
+            cellClass += ' bg-amber-950/20 border border-amber-500/20 rounded-t flex items-center justify-center';
+            cellContent = <span className="text-[6px] font-retro text-amber-400/80 select-none">CASA</span>;
           }
           if (x === 2 && y === 2) {
-            cellClass += ' bg-amber-700/80 border-b-4 border-l-4 border-r-4 border-amber-950 flex flex-col items-center';
+            cellClass += ' bg-amber-950/20 border border-amber-500/20 rounded-b flex items-center justify-center';
             const isDone = completedScenarios.includes('casa-dona-maria');
             const isUnlocked = isScenarioUnlocked('casa-dona-maria');
             cellContent = (
               <div 
                 onClick={() => handleElementClick('casa-dona-maria')}
-                className={`cursor-pointer p-1 rounded ${isDone ? 'bg-emerald-600' : isUnlocked ? 'bg-yellow-500 animate-pulse' : 'bg-slate-700'}`}
+                className={`cursor-pointer p-1 rounded flex items-center justify-center text-[7px] font-retro transition-all ${
+                  isDone 
+                    ? 'bg-emerald-500/20 border border-emerald-500 text-emerald-400' 
+                    : isUnlocked 
+                      ? 'bg-cyan-500/20 border border-cyan-400 text-cyan-300 animate-pulse' 
+                      : 'bg-slate-900 border border-slate-800 text-slate-500'
+                }`}
                 title="Casa da Dona Maria"
               >
-                {isDone ? <Check size={10} className="text-white" /> : <span className="text-[10px] text-black font-bold">D.M</span>}
+                {isDone ? <Check size={8} /> : <span>D.M</span>}
               </div>
             );
           }
 
           // Centro Comunitário (x:2, y:4)
           if (x === 2 && y === 4) {
-            cellClass += ' bg-blue-800 border-4 border-blue-950 rounded';
+            cellClass += ' bg-blue-950/20 border border-blue-500/20 rounded flex items-center justify-center';
             const isDone = completedScenarios.includes('centro-comunitario');
             const isUnlocked = isScenarioUnlocked('centro-comunitario');
             cellContent = (
               <div 
                 onClick={() => handleElementClick('centro-comunitario')}
-                className={`cursor-pointer p-1 rounded text-center ${isDone ? 'bg-emerald-600' : isUnlocked ? 'bg-yellow-500 animate-pulse' : 'bg-slate-700'}`}
+                className={`cursor-pointer p-1 rounded flex items-center justify-center text-[7px] font-retro transition-all ${
+                  isDone 
+                    ? 'bg-emerald-500/20 border border-emerald-500 text-emerald-400' 
+                    : isUnlocked 
+                      ? 'bg-cyan-500/20 border border-cyan-400 text-cyan-300 animate-pulse' 
+                      : 'bg-slate-900 border border-slate-800 text-slate-500'
+                }`}
                 title="Centro Comunitário"
               >
-                {isDone ? <Check size={10} className="text-white" /> : <span className="text-[8px] text-white font-bold">CC</span>}
+                {isDone ? <Check size={8} /> : <span>C.C</span>}
               </div>
             );
           }
 
           // Condomínio (x:6, y:1-2)
           if (x === 6 && y === 1) {
-            cellClass += ' bg-teal-800 border-t-4 border-l-4 border-r-4 border-teal-950';
-            cellContent = <div className="text-[8px] text-white">CDHU</div>;
+            cellClass += ' bg-teal-950/20 border border-teal-500/20 rounded-t flex items-center justify-center';
+            cellContent = <span className="text-[6px] font-retro text-teal-400/80 select-none">CDHU</span>;
           }
           if (x === 6 && y === 2) {
-            cellClass += ' bg-teal-800 border-b-4 border-l-4 border-r-4 border-teal-950';
+            cellClass += ' bg-teal-950/20 border border-teal-500/20 rounded-b flex items-center justify-center';
             const isDone = completedScenarios.includes('condominio');
             const isUnlocked = isScenarioUnlocked('condominio');
             cellContent = (
               <div 
                 onClick={() => handleElementClick('condominio')}
-                className={`cursor-pointer p-1 rounded ${isDone ? 'bg-emerald-600' : isUnlocked ? 'bg-yellow-500 animate-pulse' : 'bg-slate-700'}`}
+                className={`cursor-pointer p-1 rounded flex items-center justify-center text-[7px] font-retro transition-all ${
+                  isDone 
+                    ? 'bg-emerald-500/20 border border-emerald-500 text-emerald-400' 
+                    : isUnlocked 
+                      ? 'bg-cyan-500/20 border border-cyan-400 text-cyan-300 animate-pulse' 
+                      : 'bg-slate-900 border border-slate-800 text-slate-500'
+                }`}
                 title="Condomínio"
               >
-                {isDone ? <Check size={10} className="text-white" /> : <span className="text-[8px] text-white font-bold">APT</span>}
+                {isDone ? <Check size={8} /> : <span>APT</span>}
               </div>
             );
           }
 
-          // Unidade Básica de Saúde (UBS) - Células x:10-11, y:2-3
+          // UBS (x:10-11, y:2-3)
           const isUbsCell = (x === 10 || x === 11) && (y === 2 || y === 3);
           if (isUbsCell) {
-            cellClass += ' bg-slate-100 border border-slate-400';
+            cellClass += ' bg-cyan-950/15 border border-cyan-500/10';
             
-            // Desenhar cadeado ou identificação
             if (x === 10 && y === 2) {
-              cellClass += ' border-t-4 border-l-4 border-slate-600 rounded-tl';
+              cellClass += ' rounded-tl flex items-center justify-center';
               if (unlockedPhase < 2) {
-                cellContent = (
-                  <span title="UBS Bloqueada">
-                    <Lock size={14} className="text-red-500 animate-bounce" />
-                  </span>
-                );
+                cellContent = <Lock size={10} className="text-rose-500/50" />;
               } else {
-                cellContent = <div className="text-[8px] text-blue-600 font-bold">SUS</div>;
+                cellContent = <span className="text-[6px] font-retro text-cyan-400/80">SUS</span>;
               }
             }
             if (x === 11 && y === 2) {
-              cellClass += ' border-t-4 border-r-4 border-slate-600 rounded-tr';
-              cellContent = <div className="text-[8px] text-gray-500">UBS</div>;
+              cellClass += ' rounded-tr flex items-center justify-center';
+              cellContent = <span className="text-[6px] font-retro text-slate-500">UBS</span>;
             }
             if (x === 10 && y === 3) {
-              cellClass += ' border-b-4 border-l-4 border-slate-600';
-              // Entrada da Unidade interact
               const isDone = completedScenarios.includes('entrada-unidade');
               const isUnlocked = isScenarioUnlocked('entrada-unidade');
               cellContent = (
                 <div 
                   onClick={() => handleElementClick('entrada-unidade')}
-                  className={`cursor-pointer p-1 rounded ${isDone ? 'bg-emerald-600' : isUnlocked ? 'bg-yellow-500 animate-pulse' : 'bg-slate-700'}`}
+                  className={`cursor-pointer p-1 rounded flex items-center justify-center text-[6px] font-retro transition-all ${
+                    isDone 
+                      ? 'bg-emerald-500/20 border border-emerald-500 text-emerald-400' 
+                      : isUnlocked 
+                        ? 'bg-cyan-500/25 border border-cyan-400 text-cyan-300 animate-pulse shadow-[0_0_10px_rgba(6,182,212,0.4)]' 
+                        : 'bg-slate-900 border border-slate-800 text-slate-500'
+                  }`}
                   title="Entrada da UBS"
                 >
-                  {isDone ? <Check size={8} className="text-white" /> : <span className="text-[8px] text-white">PORTA</span>}
+                  {isDone ? <Check size={8} /> : <span>PORTA</span>}
                 </div>
               );
             }
             if (x === 11 && y === 3) {
-              cellClass += ' border-b-4 border-r-4 border-slate-600';
+              cellClass += ' rounded-br';
             }
           }
 
           // Placa da UBS (x:9, y:3)
           if (x === 9 && y === 3) {
-            cellClass += ' bg-amber-600 border-2 border-amber-900 rounded-t';
+            cellClass += ' bg-amber-950/20 border border-amber-500/20 rounded flex items-center justify-center';
             const isDone = completedScenarios.includes('placa-ubs');
             const isUnlocked = isScenarioUnlocked('placa-ubs');
             cellContent = (
               <div 
                 onClick={() => handleElementClick('placa-ubs')}
-                className={`cursor-pointer p-1 rounded ${isDone ? 'bg-emerald-600' : isUnlocked ? 'bg-yellow-500 animate-pulse' : 'bg-slate-700'}`}
+                className={`cursor-pointer p-1 rounded flex items-center justify-center text-[6px] font-retro transition-all ${
+                  isDone 
+                    ? 'bg-emerald-500/20 border border-emerald-500 text-emerald-400' 
+                    : isUnlocked 
+                      ? 'bg-cyan-500/20 border border-cyan-400 text-cyan-300 animate-pulse' 
+                      : 'bg-slate-900 border border-slate-800 text-slate-500'
+                }`}
                 title="Placa da UBS"
               >
-                {isDone ? <Check size={10} className="text-white" /> : <span className="text-[8px] text-black font-bold">PLACA</span>}
+                {isDone ? <Check size={8} /> : <span>PLACA</span>}
               </div>
             );
           }
 
           // Ambulância (x:12, y:2)
           if (x === 12 && y === 2) {
-            cellClass += ' bg-red-100 border-4 border-red-700 rounded';
+            cellClass += ' bg-rose-950/20 border border-rose-500/20 rounded flex items-center justify-center';
             const isDone = completedScenarios.includes('ambulancia');
             const isUnlocked = isScenarioUnlocked('ambulancia');
             cellContent = (
               <div 
                 onClick={() => handleElementClick('ambulancia')}
-                className={`cursor-pointer p-1 rounded ${isDone ? 'bg-emerald-600' : isUnlocked ? 'bg-yellow-500 animate-pulse' : 'bg-slate-700'}`}
+                className={`cursor-pointer p-1 rounded flex items-center justify-center text-[6px] font-retro transition-all ${
+                  isDone 
+                    ? 'bg-emerald-500/20 border border-emerald-500 text-emerald-400' 
+                    : isUnlocked 
+                      ? 'bg-cyan-500/20 border border-cyan-400 text-cyan-300 animate-pulse shadow-[0_0_8px_rgba(6,182,212,0.4)]' 
+                      : 'bg-slate-900 border border-slate-800 text-slate-500'
+                }`}
                 title="Ambulância"
               >
-                {isDone ? <Check size={10} className="text-white" /> : <span className="text-[8px] text-red-600 font-bold">SAMU</span>}
+                {isDone ? <Check size={8} /> : <span>SAMU</span>}
               </div>
             );
           }
         }
 
-        // Renderização do Avatar do Jogador (👨‍⚕️ / 👩‍⚕️)
+        // Pulse Cyan Player Badge
         if (isPlayer) {
           cellContent = (
-            <div className="absolute z-10 w-10 h-10 bg-blue-500 border-4 border-black rounded-full flex items-center justify-center shadow-lg transition-all animate-bounce">
+            <div className="absolute z-10 w-11 h-11 bg-gradient-to-br from-cyan-400 to-blue-600 border border-cyan-200 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.6)] transition-all animate-pulse">
               <span className="text-lg">👨‍⚕️</span>
-              {/* Seta direcional do avatar */}
-              <div className={`absolute w-3 h-3 bg-red-600 border border-black rounded-full ${
-                mainMapPlayerPos.dir === 'up' ? '-top-1' :
-                mainMapPlayerPos.dir === 'down' ? '-bottom-1' :
-                mainMapPlayerPos.dir === 'left' ? '-left-1' :
-                '-right-1'
+              <div className={`absolute w-2 h-2 bg-rose-500 border border-white rounded-full ${
+                mainMapPlayerPos.dir === 'up' ? '-top-0.5' :
+                mainMapPlayerPos.dir === 'down' ? '-bottom-0.5' :
+                mainMapPlayerPos.dir === 'left' ? '-left-0.5' :
+                '-right-0.5'
               }`} />
             </div>
           );
@@ -312,48 +338,50 @@ export const MainMap: React.FC = () => {
 
   return (
     <div className="screen-transition flex flex-col gap-4 max-w-4xl mx-auto w-full p-4">
-      {/* HUD Superior */}
-      <div className="flex justify-between items-center bg-[#1e293b] border-4 border-slate-700 p-3 rounded font-mono text-xs">
+      
+      {/* HUD Info */}
+      <div className="flex justify-between items-center p-4 rounded-xl hud-panel border border-slate-800/80 font-sans text-xs">
         <div className="flex gap-4">
-          <p>
-            Médico(a): <span className="text-yellow-400">{player.name || 'Doutor'}</span>
+          <p className="text-slate-400 font-medium">
+            Médico: <span className="text-yellow-400 font-retro">Dr(a). {player.name || 'Médico'}</span>
           </p>
-          <p>
-            Fase Atual: <span className="text-blue-400">
+          <div className="h-4 w-[1px] bg-slate-800"></div>
+          <p className="text-slate-400 font-medium">
+            Fase: <span className="text-cyan-400 font-retro">
               {unlockedPhase === 1 ? '1: Comunidade' : unlockedPhase === 2 ? '2: UBS Externa' : '3: UBS Interna'}
             </span>
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          <p>
-            Score: <span className="text-emerald-400">{completedScenarios.length * 10} XP</span>
-          </p>
+        <div>
           <button 
             onClick={resetGame}
-            className="text-red-400 hover:text-red-500 font-bold flex items-center gap-1 bg-none border-0 cursor-pointer"
+            className="text-rose-400 hover:text-rose-500 font-semibold flex items-center gap-1.5 bg-transparent border-0 cursor-pointer transition-colors"
             title="Reiniciar Simulação"
           >
-            <LogOut size={12} /> Sair
+            <LogOut size={12} /> Reiniciar
           </button>
         </div>
       </div>
 
-      {/* Tela do Jogo / Grid do Mapa */}
+      {/* Futuristic Map Wrapper */}
       <div className="gameboy-frame">
         <div className="gameboy-screen-wrapper">
-          <div className="grid grid-cols-15 bg-[#1e3a1e] relative overflow-hidden select-none border-4 border-black">
+          <div className="grid grid-cols-15 bg-[#070b13] relative overflow-hidden select-none border border-slate-900 rounded-lg map-grid-container">
             {renderGridCells()}
           </div>
         </div>
       </div>
 
-      {/* Caixa de Diálogo Retro */}
+      {/* bottom Dialogue box formatted in glassmorphism */}
       <div className="retro-dialog mt-2 text-left">
-        <p className="text-yellow-400 text-[10px] mb-2 font-mono">DICA / EVENTO:</p>
-        <p className="text-xs font-mono">{dialogText}</p>
+        <div className="flex items-center gap-1.5 mb-1.5">
+          <ShieldAlert size={12} className="text-yellow-400" />
+          <span className="text-yellow-400 text-[10px] font-retro uppercase tracking-wider">DIRETRIZ E ORIENTAÇÃO:</span>
+        </div>
+        <p className="text-xs text-slate-300 font-sans leading-normal">{dialogText}</p>
       </div>
 
-      {/* Controles para Dispositivos Móveis */}
+      {/* mobile Directional controller */}
       <div className="md:hidden">
         <Controls onMove={movePlayerOnMainMap} />
       </div>

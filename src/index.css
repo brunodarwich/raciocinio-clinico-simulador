@@ -1,183 +1,347 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* Paleta de Cores Retro Gameboy/Modern Hybrid */
-  --bg-dark: #0f172a;
-  --bg-card: #1e293b;
+  /* Premium Dark Theme Palette */
+  --bg-dark: #090d16;
+  --bg-dark-radial: radial-gradient(circle at center, #151e36 0%, #090d16 100%);
+  --bg-card: rgba(13, 20, 38, 0.6);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(6, 182, 212, 0.15);
+  
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
+  --text-muted: #64748b;
   
-  /* Cores Temáticas Retro */
-  --gameboy-green-light: #8bac0f;
-  --gameboy-green-dark: #306230;
-  --gameboy-screen: #9bbc0f;
-  --gameboy-screen-dark: #0f380f;
-  
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
+  /* Brand Colors */
+  --primary: #06b6d4;
+  --primary-hover: #0891b2;
   --success: #10b981;
-  --danger: #ef4444;
+  --success-hover: #059669;
+  --danger: #f43f5e;
   --warning: #f59e0b;
-  --locked: #64748b;
+  --locked: #475569;
   
-  /* Fontes */
-  --font-retro: 'Press Start 2P', monospace;
+  /* Typography */
+  --font-retro: 'Outfit', sans-serif; /* Replaced retro pixel font with Outfit for premium look */
   --font-sans: 'Inter', sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
 }
 
-/* Reset e Configurações Globais */
+/* Reset & Global Settings */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: var(--font-sans);
 }
 
 body {
   background-color: var(--bg-dark);
+  background-image: var(--bg-dark-radial);
   color: var(--text-primary);
+  font-family: var(--font-sans);
   overflow-x: hidden;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar Estilo Retro */
+/* Scrollbar Style */
 ::-webkit-scrollbar {
-  width: 12px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: var(--bg-dark);
-  border-left: 4px solid var(--text-secondary);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--text-secondary);
-  border: 3px solid var(--bg-dark);
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 
-/* Tipografia */
-h1, h2, h3, h4, .retro-text {
+/* Common Tailwind Utilities mapping */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.justify-end { justify-content: flex-end; }
+.flex-1 { flex: 1 1 0%; }
+.min-h-screen { min-height: 100vh; }
+.min-h-\[500px\] { min-height: 500px; }
+.w-full { width: 100%; }
+.max-w-md { max-width: 28rem; }
+.max-w-lg { max-width: 32rem; }
+.max-w-2xl { max-width: 42rem; }
+.max-w-4xl { max-width: 56rem; }
+.mx-auto { margin-left: auto; margin-right: auto; }
+
+.p-3 { padding: 0.75rem; }
+.p-4 { padding: 1rem; }
+.p-6 { padding: 1.5rem; }
+.py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+.py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+.py-12 { padding-top: 3rem; padding-bottom: 3rem; }
+.py-16 { padding-top: 4rem; padding-bottom: 4rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.pl-4 { padding-left: 1rem; }
+.pr-4 { padding-right: 1rem; }
+.pt-2 { padding-top: 0.5rem; }
+.pt-4 { padding-top: 1rem; }
+.pb-2 { padding-bottom: 0.5rem; }
+.pb-3 { padding-bottom: 0.75rem; }
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-4 { margin-top: 1rem; }
+.mt-6 { margin-top: 1.5rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-4 { margin-bottom: 1rem; }
+.my-6 { margin-top: 1.5rem; margin-bottom: 1.5rem; }
+.my-12 { margin-top: 3rem; margin-bottom: 3rem; }
+
+.gap-1 { gap: 0.25rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 0.75rem; }
+.gap-4 { gap: 1rem; }
+.gap-6 { gap: 1.5rem; }
+.gap-8 { gap: 2rem; }
+
+.grid { display: grid; }
+.grid-cols-10 { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+.grid-cols-15 { grid-template-columns: repeat(15, minmax(0, 1fr)); }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.overflow-hidden { overflow: hidden; }
+.select-none { user-select: none; }
+.cursor-pointer { cursor: pointer; }
+.rounded { border-radius: 6px; }
+.rounded-t { border-top-left-radius: 6px; border-top-right-radius: 6px; }
+.rounded-b { border-bottom-left-radius: 6px; border-bottom-right-radius: 6px; }
+.rounded-full { border-radius: 9999px; }
+.shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); }
+.z-10 { z-index: 10; }
+
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.text-xs { font-size: 0.75rem; }
+.text-sm { font-size: 0.875rem; }
+.text-lg { font-size: 1.125rem; }
+.text-xl { font-size: 1.25rem; }
+.text-2xl { font-size: 1.5rem; }
+.text-3xl { font-size: 1.875rem; }
+.font-mono { font-family: var(--font-mono); }
+.font-sans { font-family: var(--font-sans); }
+.font-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }
+.italic { font-style: italic; }
+.space-y-4 > * + * { margin-top: 1rem; }
+
+/* Theme Colors Text */
+.text-yellow-400 { color: #facc15; }
+.text-yellow-500 { color: #eab308; }
+.text-blue-300 { color: #93c5fd; }
+.text-blue-400 { color: #60a5fa; }
+.text-emerald-400 { color: #34d399; }
+.text-emerald-500 { color: #10b981; }
+.text-red-400 { color: #f87171; }
+.text-red-500 { color: #ef4444; }
+.text-teal-400 { color: #2dd4bf; }
+.text-teal-500 { color: #14b8a6; }
+.text-gray-200 { color: #e2e8f0; }
+.text-gray-300 { color: #cbd5e1; }
+.text-gray-400 { color: #94a3b8; }
+.text-gray-500 { color: #64748b; }
+.text-slate-200 { color: #e2e8f0; }
+.text-slate-300 { color: #cbd5e1; }
+.text-slate-500 { color: #64748b; }
+.text-slate-600 { color: #475569; }
+.text-white { color: #ffffff; }
+
+/* Font Retro mapping to Outfit */
+.font-retro {
   font-family: var(--font-retro);
-  line-height: 1.5;
+  font-weight: 700;
+  letter-spacing: 0.05em;
 }
 
-/* Utilitários Retro */
-.pixel-borders {
-  border: 4px solid #fff;
-  outline: 4px solid #000;
-  box-shadow: 0 0 0 4px #fff, 0 0 0 8px #000;
-  image-rendering: pixelated;
-}
-
+/* Glassmorphism Cards */
 .retro-container {
-  background-color: #000;
-  border: 4px solid #fff;
-  padding: 16px;
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 2rem;
   position: relative;
-  font-family: var(--font-retro);
-  font-size: 12px;
-  color: #fff;
-  image-rendering: pixelated;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  box-sizing: border-box;
 }
 
 .retro-container::before {
-  content: '';
-  position: absolute;
-  top: -8px; left: -8px; right: -8px; bottom: -8px;
-  border: 4px solid #000;
-  pointer-events: none;
+  display: none; /* Removed retro box outline shadow */
 }
 
-/* Botão Retro Clássico */
+/* Cyan Glossy Buttons */
 .retro-btn {
   font-family: var(--font-retro);
-  font-size: 12px;
-  padding: 12px 18px;
-  background-color: #e2e8f0;
-  color: #0f172a;
-  border: 4px solid #000;
-  box-shadow: -4px 4px 0 0 #000;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.8rem 1.6rem;
+  background: rgba(6, 182, 212, 0.1);
+  color: var(--primary);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  border-radius: 8px;
   cursor: pointer;
   outline: none;
-  transition: transform 0.1s, box-shadow 0.1s;
-  image-rendering: pixelated;
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(6, 182, 212, 0.05);
 }
 
 .retro-btn:hover {
-  background-color: #cbd5e1;
+  background: var(--primary);
+  color: #030712;
+  border-color: var(--primary);
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+  transform: translateY(-2px);
 }
 
 .retro-btn:active {
-  transform: translate(-4px, 4px);
-  box-shadow: 0 0 0 0 #000;
+  transform: translateY(1px);
 }
 
 .retro-btn.primary {
-  background-color: var(--gameboy-green-light);
-  color: var(--gameboy-screen-dark);
+  background: var(--primary);
+  color: #030712;
+  border-color: var(--primary);
+  box-shadow: 0 4px 14px rgba(6, 182, 212, 0.3);
 }
+
 .retro-btn.primary:hover {
-  background-color: #9cd01a;
+  background: #22d3ee;
+  box-shadow: 0 0 25px rgba(6, 182, 212, 0.6);
 }
 
 .retro-btn.disabled {
-  background-color: #64748b;
-  color: #94a3b8;
-  cursor: not-allowed;
-  box-shadow: -4px 4px 0 0 #000;
-  transform: none;
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: var(--text-muted) !important;
+  border-color: var(--border-color) !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
-/* Caixa de Diálogo Clássica Gameboy */
+/* Elegant Dialog Box */
 .retro-dialog {
-  background-color: #000;
-  border: 4px solid #fff;
-  padding: 20px;
-  box-shadow: 0 0 0 4px #000;
-  font-family: var(--font-retro);
-  font-size: 14px;
-  line-height: 1.6;
-  color: #fff;
-  position: relative;
-  min-height: 120px;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--primary);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  min-height: auto;
 }
 
 .retro-dialog::after {
-  content: '';
-  position: absolute;
-  top: -8px; left: -8px; right: -8px; bottom: -8px;
-  border: 4px solid #000;
-  pointer-events: none;
+  display: none;
 }
 
-/* Tela do Jogo Emulada */
-.gameboy-frame {
-  background: #cbd5e1;
-  border: 8px solid #64748b;
+/* High-tech HUD */
+header, footer {
+  background: rgba(15, 23, 42, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
-  padding: 24px;
-  box-shadow: inset 0 -10px 0 #475569, 0 10px 20px rgba(0,0,0,0.5);
-  max-width: 900px;
-  width: 100%;
-  margin: 0 auto;
+  padding: 1rem 1.5rem;
+}
+
+.hud-panel {
+  background: rgba(15, 23, 42, 0.65) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+/* Futuristic Coordinate Maps Console */
+.gameboy-frame {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 1.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  box-sizing: border-box;
 }
 
 .gameboy-screen-wrapper {
-  background: var(--gameboy-screen-dark);
-  border: 12px solid #334155;
-  border-radius: 4px;
-  padding: 4px;
+  background: #0d1222;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  padding: 6px;
 }
 
-/* Transição de tela clássica */
+/* Transitions */
 .screen-transition {
-  animation: fadeEffect 0.3s ease-in-out;
+  animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes fadeEffect {
-  from { opacity: 0; }
-  to { opacity: 1; }
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Custom D-Pad styles */
+.dpad-container {
+  display: grid;
+  grid-template-areas: 
+    ". up ."
+    "left . right"
+    ". down .";
+  gap: 6px;
+  width: 130px;
+  height: 130px;
+  margin: 0 auto;
+}
+
+.dpad-btn {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  color: #fff !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4) !important;
+}
+
+.dpad-btn:active {
+  background: var(--primary) !important;
+  color: #000 !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.5) !important;
+}
+
+/* Map Grid elements */
+.map-grid-container {
+  box-shadow: 0 12px 36px rgba(0,0,0,0.5);
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useGame } from '../../context/GameContext';
-import { UserCheck } from 'lucide-react';
+import { UserCheck, User, ShieldAlert } from 'lucide-react';
 
 export const InfoScreen: React.FC = () => {
   const { setPlayer, setScreen } = useGame();
@@ -20,29 +20,35 @@ export const InfoScreen: React.FC = () => {
   return (
     <div className="screen-transition flex flex-col items-center justify-center min-h-[500px] p-6">
       <div className="retro-container max-w-md w-full flex flex-col gap-6">
-        <h2 className="text-sm text-yellow-400 border-b-4 border-yellow-400 pb-2 mb-2">
-          DADOS DO PROFISSIONAL
+        <h2 className="text-sm text-yellow-400 border-b border-slate-800 pb-3 mb-2 font-retro uppercase">
+          Cadastro do Profissional
         </h2>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6 text-left">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5 text-left">
           <div className="flex flex-col gap-2">
-            <label className="font-mono text-xs text-gray-300">NOME DO MÉDICO(A):</label>
+            <label className="font-sans font-semibold text-xs text-slate-300 flex items-center gap-1.5">
+              <User size={12} className="text-cyan-400" />
+              NOME COMPLETO DO MÉDICO(A):
+            </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Digite seu nome..."
+              placeholder="Digite seu nome profissional..."
               maxLength={25}
-              className="bg-black border-4 border-white text-white p-3 font-mono text-xs outline-none focus:border-yellow-400"
+              className="w-full bg-slate-950/40 border border-slate-800 text-white rounded-lg p-3 outline-none focus:border-cyan-500 font-sans"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label className="font-mono text-xs text-gray-300">ESPECIALIDADE / PROGRAMA:</label>
+            <label className="font-sans font-semibold text-xs text-slate-300 flex items-center gap-1.5">
+              <ShieldAlert size={12} className="text-cyan-400" />
+              ESPECIALIDADE / PROGRAMA:
+            </label>
             <select
               value={specialty}
               onChange={(e) => setSpecialty(e.target.value)}
-              className="bg-black border-4 border-white text-white p-3 font-mono text-xs outline-none focus:border-yellow-400"
+              className="w-full bg-slate-950/40 border border-slate-800 text-white rounded-lg p-3 outline-none focus:border-cyan-500 font-sans cursor-pointer"
             >
               <option value="Clínica Médica">Clínica Médica</option>
               <option value="Medicina de Família e Comunidade">Medicina de Família (MFC)</option>
@@ -51,18 +57,21 @@ export const InfoScreen: React.FC = () => {
             </select>
           </div>
 
-          <div className="text-gray-400 font-sans text-xs leading-relaxed border-t border-gray-800 pt-4 mt-2">
-            <p className="mb-2">
-              <strong>Contexto:</strong> Você assumiu a equipe de saúde da família na Unidade Básica de Saúde local.
+          <div className="text-slate-400 font-sans text-xs leading-relaxed border-t border-slate-800/80 pt-4 mt-2 bg-slate-950/20 p-3 rounded-lg border border-slate-900">
+            <p className="mb-2 text-slate-300">
+              <strong>Contexto Clínico:</strong> Você assumiu o plantão de saúde da família na Unidade Básica de Saúde (UBS) local.
             </p>
-            <p>
-              Para iniciar os atendimentos, navegue pela comunidade atendida para compreender a realidade social de seus pacientes e, em seguida, conduza o atendimento clínico dentro da UBS.
+            <p className="text-[11px] text-slate-400">
+              Antes de iniciar o atendimento clínico de consultório, explore a comunidade para compreender a realidade social, o saneamento básico e os fatores ambientais dos seus pacientes.
             </p>
           </div>
 
-          <button type="submit" className="retro-btn primary justify-center mt-4">
+          <button 
+            type="submit" 
+            className="retro-btn primary justify-center mt-3 shadow-[0_0_15px_rgba(6,182,212,0.25)]"
+          >
             <UserCheck size={14} className="mr-1" />
-            CONFIRMAR
+            CONFIRMAR CADASTRO
           </button>
         </form>
       </div>
