@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useGame, EXTRA_MAP_GRID, SCENARIO_LABELS, SCENARIO_ORDER } from '../../context/GameContext';
 import { Controls } from './Controls';
-import { Check, Star, ArrowLeft, ShieldAlert } from 'lucide-react';
+import { Check, Star, ShieldAlert, Home, Map } from 'lucide-react';
 
 export const ExtraMap: React.FC = () => {
   const {
@@ -10,7 +10,7 @@ export const ExtraMap: React.FC = () => {
     completedScenarios,
     enterScenario,
     setScreen,
-    score
+    resetGame
   } = useGame();
 
   const [dialogText, setDialogText] = useState<string>('Você entrou na UBS. Complete o atendimento: Recepção -> Triagem -> Consultório -> Anamnese.');
@@ -96,11 +96,11 @@ export const ExtraMap: React.FC = () => {
         const isWalkable = EXTRA_MAP_GRID[y][x] === 1;
         const isPlayer = extraMapPlayerPos.x === x && extraMapPlayerPos.y === y;
         
-        let cellClass = 'relative w-full aspect-square flex items-center justify-center border border-slate-900/30 ';
+        let cellClass = 'relative w-full aspect-square flex items-center justify-center border border-white/5 ';
         let cellContent: React.ReactNode = null;
 
         if (isWalkable) {
-          cellClass += 'bg-slate-800/40 border-slate-700/20'; // Inside floor
+          cellClass += 'bg-transparent'; // Inside floor
 
           // Recepção Star Point (x:3, y:5)
           if (x === 3 && y === 5) {
@@ -187,8 +187,8 @@ export const ExtraMap: React.FC = () => {
           }
 
         } else {
-          // Walls - Glass panels
-          cellClass += 'bg-[#0a0f1b] border-slate-950/40';
+          // Walls
+          cellClass += 'bg-transparent';
 
           if (x === 2 && y === 0) {
             cellContent = <span className="text-[6px] font-retro text-cyan-400/80 select-none">TRIAGEM</span>;
@@ -229,30 +229,18 @@ export const ExtraMap: React.FC = () => {
   return (
     <div className="screen-transition flex flex-col gap-4 max-w-2xl mx-auto w-full p-4">
       
-      {/* HUD Info */}
-      <div className="flex justify-between items-center p-4 rounded-xl hud-panel border border-slate-800/80 font-sans text-xs">
-        <div>
-          <button 
-            onClick={() => setScreen('main-map')}
-            className="text-cyan-400 hover:text-cyan-300 font-semibold flex items-center gap-1.5 bg-transparent border-0 cursor-pointer transition-colors"
-            title="Voltar para a área externa"
-          >
-            <ArrowLeft size={12} /> Voltar à Rua
-          </button>
-        </div>
-        <div className="flex items-center gap-4">
-          <p className="text-slate-400 font-medium">UBS Interna (Fase 3)</p>
-          <div className="h-4 w-[1px] bg-slate-800"></div>
-          <p className="text-slate-400 font-medium">
-            Score: <span className="text-emerald-400 font-retro">{score} XP</span>
-          </p>
-        </div>
-      </div>
-
       {/* Futuristic Map Wrapper */}
       <div className="gameboy-frame">
         <div className="gameboy-screen-wrapper">
-          <div className="grid grid-cols-10 bg-[#070b13] relative overflow-hidden select-none border border-slate-900 rounded-lg map-grid-container">
+          <div 
+            className="grid grid-cols-10 bg-[#070b13] relative overflow-hidden select-none border border-slate-900 rounded-lg map-grid-container"
+            style={{
+              backgroundImage: "url('/assets/script_espera_bg.png')",
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              aspectRatio: '10/8'
+            }}
+          >
             {renderGridCells()}
           </div>
         </div>
@@ -270,6 +258,26 @@ export const ExtraMap: React.FC = () => {
       {/* mobile Directional controller */}
       <div className="md:hidden">
         <Controls onMove={movePlayerOnExtraMap} />
+      </div>
+
+      {/* Floating Bottom Navigation Bar */}
+      <div className="flex justify-center mt-2">
+        <div className="nav-pill-container">
+          <button 
+            onClick={resetGame}
+            className="nav-pill-button"
+            title="Ir para a tela inicial"
+          >
+            <Home size={14} /> Home
+          </button>
+          <button 
+            onClick={() => setScreen('main-map')}
+            className="nav-pill-button"
+            title="Voltar para a rua"
+          >
+            <Map size={14} /> Mapa
+          </button>
+        </div>
       </div>
     </div>
   );

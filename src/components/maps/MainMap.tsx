@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useGame, MAIN_MAP_GRID, SCENARIO_LABELS, SCENARIO_ORDER } from '../../context/GameContext';
 import { Controls } from './Controls';
-import { Lock, Check, Star, LogOut, ShieldAlert } from 'lucide-react';
+import { Lock, Check, Star, ShieldAlert, Home, Map } from 'lucide-react';
 
 export const MainMap: React.FC = () => {
   const {
@@ -11,7 +11,7 @@ export const MainMap: React.FC = () => {
     unlockedPhase,
     enterScenario,
     resetGame,
-    player
+    setScreen
   } = useGame();
 
   const [dialogText, setDialogText] = useState<string>('Use as SETAS/WASD para andar. Aproxime-se dos pontos com "*" ou clique neles.');
@@ -110,11 +110,11 @@ export const MainMap: React.FC = () => {
         const isPath = MAIN_MAP_GRID[y][x] === 1;
         const isPlayer = mainMapPlayerPos.x === x && mainMapPlayerPos.y === y;
         
-        let cellClass = 'relative w-full aspect-square flex items-center justify-center border border-slate-900/30 ';
+        let cellClass = 'relative w-full aspect-square flex items-center justify-center border border-white/5 ';
         let cellContent: React.ReactNode = null;
 
         if (isPath) {
-          cellClass += 'bg-slate-800/40 border-slate-700/20'; // Cyber path/road
+          cellClass += 'bg-transparent'; // Cyber path/road
           
           // Gate Border Cell
           if (x === 7 && y === 5) {
@@ -148,8 +148,8 @@ export const MainMap: React.FC = () => {
           }
 
         } else {
-          // Obstacles - Replaced retro green with cyber matrix dark grid
-          cellClass += 'bg-[#0a0f1b] border-slate-950/40';
+          // Obstacles
+          cellClass += 'bg-transparent';
 
           // Casa da Dona Maria (x:2, y:1-2)
           if (x === 2 && y === 1) {
@@ -339,34 +339,18 @@ export const MainMap: React.FC = () => {
   return (
     <div className="screen-transition flex flex-col gap-4 max-w-4xl mx-auto w-full p-4">
       
-      {/* HUD Info */}
-      <div className="flex justify-between items-center p-4 rounded-xl hud-panel border border-slate-800/80 font-sans text-xs">
-        <div className="flex gap-4">
-          <p className="text-slate-400 font-medium">
-            Médico: <span className="text-yellow-400 font-retro">Dr(a). {player.name || 'Médico'}</span>
-          </p>
-          <div className="h-4 w-[1px] bg-slate-800"></div>
-          <p className="text-slate-400 font-medium">
-            Fase: <span className="text-cyan-400 font-retro">
-              {unlockedPhase === 1 ? '1: Comunidade' : unlockedPhase === 2 ? '2: UBS Externa' : '3: UBS Interna'}
-            </span>
-          </p>
-        </div>
-        <div>
-          <button 
-            onClick={resetGame}
-            className="text-rose-400 hover:text-rose-500 font-semibold flex items-center gap-1.5 bg-transparent border-0 cursor-pointer transition-colors"
-            title="Reiniciar Simulação"
-          >
-            <LogOut size={12} /> Reiniciar
-          </button>
-        </div>
-      </div>
-
       {/* Futuristic Map Wrapper */}
       <div className="gameboy-frame">
         <div className="gameboy-screen-wrapper">
-          <div className="grid grid-cols-15 bg-[#070b13] relative overflow-hidden select-none border border-slate-900 rounded-lg map-grid-container">
+          <div 
+            className="grid grid-cols-15 bg-[#070b13] relative overflow-hidden select-none border border-slate-900 rounded-lg map-grid-container"
+            style={{ 
+              backgroundImage: "url('/assets/script_map_gpt.png')", 
+              backgroundSize: 'cover', 
+              backgroundPosition: 'center',
+              aspectRatio: '15/7'
+            }}
+          >
             {renderGridCells()}
           </div>
         </div>
@@ -384,6 +368,27 @@ export const MainMap: React.FC = () => {
       {/* mobile Directional controller */}
       <div className="md:hidden">
         <Controls onMove={movePlayerOnMainMap} />
+      </div>
+
+      {/* Floating Bottom Navigation Bar */}
+      <div className="flex justify-center mt-2">
+        <div className="nav-pill-container">
+          <button 
+            onClick={resetGame}
+            className="nav-pill-button"
+            title="Ir para a tela inicial"
+          >
+            <Home size={14} /> Home
+          </button>
+          <button 
+            onClick={() => setScreen('main-map')}
+            className="nav-pill-button opacity-50 cursor-not-allowed"
+            disabled
+            title="Você já está no mapa"
+          >
+            <Map size={14} /> Mapa
+          </button>
+        </div>
       </div>
     </div>
   );

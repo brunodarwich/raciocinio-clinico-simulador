@@ -1,4 +1,4 @@
-import { GameProvider, useGame } from './context/GameContext';
+import { GameProvider, useGame, SCENARIO_LABELS } from './context/GameContext';
 import { WelcomeScreen } from './components/screens/WelcomeScreen';
 import { InfoScreen } from './components/screens/InfoScreen';
 import { TutorialScreen } from './components/screens/TutorialScreen';
@@ -31,7 +31,7 @@ function GameRouter() {
 }
 
 function HeaderBar() {
-  const { screen, player, score, completedScenarios } = useGame();
+  const { screen, player, score, completedScenarios, mainMapPlayerPos, extraMapPlayerPos, currentScenarioId } = useGame();
 
   // On welcome or info, render a simple centralized logo
   if (screen === 'welcome' || screen === 'info') {
@@ -49,30 +49,88 @@ function HeaderBar() {
     );
   }
 
-  // On other screens, render a beautiful compact HUD
-  return (
-    <header className="max-w-4xl mx-auto w-full px-4 mb-6 select-none flex flex-col sm:flex-row items-center justify-between gap-4 hud-panel">
-      <div className="flex items-center gap-3">
-        <img 
-          src="/assets/script_logo-WD1wTJUs.svg" 
-          alt="Script Logo" 
-          className="h-7 w-auto"
-        />
-        <div className="hidden sm:block h-6 w-[1px] bg-slate-800"></div>
-        <div className="text-left">
-          <p className="text-xs font-retro text-yellow-400">Dr(a). {player.name || 'Médico'}</p>
-          <p className="text-[10px] text-slate-400 font-sans">{player.specialty}</p>
-        </div>
-      </div>
+  // Helper to determine the current title and subtitle based on positioning or scenario
+  const getHeaderInfo = () => {
+    if (screen === 'scenario' && currentScenarioId) {
+      const title = SCENARIO_LABELS[currentScenarioId]?.title || 'Cenário Clínico';
+      return {
+        title,
+        subtitle: 'Responda à questão clínica para prosseguir.'
+      };
+    }
+    if (screen === 'extra-map') {
+      const { x, y } = extraMapPlayerPos;
+      let loc = 'Interior da UBS';
+      if (x === 3 && y === 5) loc = 'Recepção da UBS';
+      else if (x === 2 && y === 1) loc = 'Sala de Triagem';
+      else if (x === 8 && y === 2) loc = 'Consultório Médico';
+      else if (x === 8 && y === 1) loc = 'Anamnese Clínico';
+      return {
+        title: loc,
+        subtitle: 'Caminhe com seu avatar até o estágio desejado.'
+      };
+    }
+    // Default to main-map
+    const { x, y } = mainMapPlayerPos;
+    let loc = 'Mapa Principal';
+    if (x === 4 && y === 5) loc = 'Rua de Acesso';
+    else if (x === 2 && y === 3) loc = 'Centro Comunitário';
+    else if (x === 2 && y === 2) loc = 'Casa da Dona Maria';
+    else if (x === 6 && y === 2) loc = 'Condomínio Residencial';
+    else if (x === 10 && y === 3) loc = 'Entrada da Unidade';
+    else if (x === 9 && y === 3) loc = 'Placa da UBS';
+    else if (x === 12 && y === 2) loc = 'Ambulância';
+    return {
+      title: loc,
+      subtitle: 'Caminhe com seu avatar até o estágio desejado.'
+    };
+  };
 
-      <div className="flex items-center gap-6">
-        <div className="text-center sm:text-right">
-          <p className="text-[10px] text-slate-500 font-mono">RESOLVIDOS</p>
-          <p className="text-xs font-bold font-retro text-teal-400">{completedScenarios.length} / 11</p>
+  const info = getHeaderInfo();
+
+  return (
+    <header className="white-header select-none">
+      <div className="max-w-4xl mx-auto w-full flex flex-col sm:flex-row items-center justify-between gap-4 py-2">
+        {/* Left: Avatar & Profile info */}
+        <div className="flex items-center gap-3 w-full sm:w-1/3">
+          <div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 bg-slate-50 flex-shrink-0 flex items-center justify-center">
+            <img 
+              src="/assets/avatar-01.png" 
+              alt="Avatar Médico" 
+              className="w-full h-full object-cover scale-110 translate-y-0.5"
+            />
+          </div>
+          <div className="text-left">
+            <p className="text-xs font-bold text-slate-800 leading-tight">
+              Dr(a). {player.name || 'Médico'}
+            </p>
+            <p className="text-[10px] text-slate-400 font-sans leading-tight">
+              {player.specialty || 'Médico da Família'}
+            </p>
+          </div>
         </div>
-        <div className="text-center sm:text-right">
-          <p className="text-[10px] text-slate-500 font-mono">PONTUAÇÃO</p>
-          <p className="text-xs font-bold font-retro text-emerald-400">{score} XP</p>
+
+        {/* Center: Screen Title & Subtitle */}
+        <div className="text-center w-full sm:w-1/3 flex flex-col items-center">
+          <h1 className="text-lg md:text-xl font-extrabold font-sans text-[#1a426e] leading-snug">
+            {info.title}
+          </h1>
+          <p className="text-[10px] text-slate-500 font-sans">
+            {info.subtitle}
+          </p>
+        </div>
+
+        {/* Right: Score and stats */}
+        <div className="flex items-center justify-center sm:justify-end gap-6 w-full sm:w-1/3 text-slate-700 font-sans text-xs">
+          <div className="text-center sm:text-right">
+            <p className="text-[9px] text-slate-400 font-mono">RESOLVIDOS</p>
+            <p className="text-xs font-bold font-retro text-[#1a426e]">{completedScenarios.length} / 11</p>
+          </div>
+          <div className="h-6 w-[1px] bg-slate-200 hidden sm:block"></div>
+          <div className="text-center sm:text-right">
+            <p className="text-[9px] text-slate-400 font-mono">PONTUAÇÃO</p>
+            <p className="text-xs font-bold font-retro text-emerald-600">{score} XP</p>
+          </div>
         </div>
       </div>
     </header>

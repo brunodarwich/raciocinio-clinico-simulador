@@ -35,8 +35,9 @@
 }
 
 body {
-  background-color: var(--bg-dark);
-  background-image: var(--bg-dark-radial);
+  background-color: #0b1426;
+  background-image: url('/assets/script_bg.png');
+  background-repeat: repeat;
   color: var(--text-primary);
   font-family: var(--font-sans);
   overflow-x: hidden;
@@ -345,3 +346,81 @@ header, footer {
 .map-grid-container {
   box-shadow: 0 12px 36px rgba(0,0,0,0.5);
 }
+
+/* White Header Bar styles */
+.white-header {
+  background-color: #ffffff;
+  color: #1e293b;
+  border-bottom: 2px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  padding: 0.5rem 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Floating Bottom Navigation Pill styles */
+.nav-pill-container {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  padding: 0.5rem 1rem;
+  display: inline-flex;
+  gap: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.nav-pill-button {
+  background-color: #1a426e;
+  color: #ffffff !important;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  font-family: var(--font-retro);
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-pill-button:hover {
+  background-color: #112d4e;
+  transform: translateY(-1px);
+}
+
+.nav-pill-button:active {
+  transform: translateY(1px);
+}
+
+/* Transparent Map and Scenario container styles */
+.map-grid-transparent {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.map-cell-transparent {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.scenario-bg-overlay {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.scenario-glass-overlay {
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
