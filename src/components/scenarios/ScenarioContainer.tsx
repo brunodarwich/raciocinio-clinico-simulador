@@ -5,6 +5,8 @@ import { BookOpen, MessageSquare, HelpCircle, Award, AlertCircle, RefreshCw, X, 
 
 const getScenarioBackground = (id: string): string => {
   switch (id) {
+    case 'rua-acesso':
+      return '/assets/script_rua_acesso.png';
     case 'centro-comunitario':
       return '/assets/script_espera_bg.png';
     case 'casa-dona-maria':
@@ -45,7 +47,7 @@ export const ScenarioContainer: React.FC = () => {
 
   const handleOptionSelect = (index: number) => {
     setSelectedOption(index);
-    const correct = index === data.question.correctIndex;
+    const correct = index === data.question?.correctIndex;
     setIsCorrect(correct);
     setStep('feedback');
   };
@@ -117,15 +119,24 @@ export const ScenarioContainer: React.FC = () => {
                     <BookOpen size={14} />
                     <span className="text-[9px] font-retro uppercase tracking-widest">NARRATIVA / CONTEXTO</span>
                   </div>
-                  <p className="font-sans text-xs text-slate-200 leading-relaxed bg-slate-950/60 p-4 border border-slate-800/50 rounded-xl shadow-inner max-h-[220px] overflow-y-auto">
+                  <p className="font-sans text-xs text-slate-200 leading-relaxed bg-slate-950/60 p-4 border border-slate-800/50 rounded-xl shadow-inner max-h-[280px] overflow-y-auto whitespace-pre-line">
                     {data.description}
                   </p>
-                  <button 
-                    onClick={handleNextStep} 
-                    className="retro-btn primary justify-center self-end shadow-[0_0_15px_rgba(6,182,212,0.25)]"
-                  >
-                    AVANÇAR
-                  </button>
+                  {data.question ? (
+                    <button 
+                      onClick={handleNextStep} 
+                      className="retro-btn primary justify-center self-end shadow-[0_0_15px_rgba(6,182,212,0.25)]"
+                    >
+                      AVANÇAR
+                    </button>
+                  ) : (
+                    <button 
+                      onClick={handleComplete} 
+                      className="retro-btn primary justify-center self-end shadow-[0_0_15px_rgba(16,185,129,0.25)]"
+                    >
+                      CONCLUIR (+10 XP)
+                    </button>
+                  )}
                 </div>
               )}
 
@@ -172,11 +183,11 @@ export const ScenarioContainer: React.FC = () => {
                   </div>
 
                   <p className="font-sans text-xs text-slate-100 font-semibold leading-relaxed bg-slate-950/60 p-4 border border-slate-800/50 rounded-xl shadow-inner max-h-[120px] overflow-y-auto">
-                    {data.question.text}
+                    {data.question?.text}
                   </p>
 
                   <div className="flex flex-col gap-2 max-h-[200px] overflow-y-auto pr-1">
-                    {data.question.options.map((option, idx) => (
+                    {data.question?.options.map((option, idx) => (
                       <button
                         key={idx}
                         onClick={() => handleOptionSelect(idx)}
@@ -213,7 +224,7 @@ export const ScenarioContainer: React.FC = () => {
                   <div className="bg-slate-950/60 p-3 border border-slate-800/50 rounded-xl font-sans text-xs text-slate-300 shadow-inner">
                     <p className="text-slate-500 font-semibold text-[8px] uppercase tracking-wider mb-1">Sua resposta:</p>
                     <p className="font-semibold text-slate-200">
-                      {selectedOption !== null && data.question.options[selectedOption]}
+                      {selectedOption !== null && data.question?.options[selectedOption]}
                     </p>
                   </div>
 
@@ -223,7 +234,7 @@ export const ScenarioContainer: React.FC = () => {
                       ? 'bg-emerald-950/20 border-emerald-500/20 text-emerald-200' 
                       : 'bg-rose-950/20 border-rose-500/20 text-rose-200'
                   }`}>
-                    <p>{isCorrect ? data.question.feedbackSuccess : data.question.feedbackError}</p>
+                    <p>{isCorrect ? data.question?.feedbackSuccess : data.question?.feedbackError}</p>
                   </div>
 
                   <div className="flex gap-4 justify-end mt-1">

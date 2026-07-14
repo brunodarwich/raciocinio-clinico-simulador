@@ -4,7 +4,7 @@ export interface ScenarioConfig {
   phase: number;
   description: string;
   dialogues: string[];
-  question: {
+  question?: {
     text: string;
     options: string[];
     correctIndex: number;
@@ -19,23 +19,8 @@ export const SCENARIO_DATA: Record<string, ScenarioConfig> = {
     id: 'rua-acesso',
     title: 'Rua de Acesso',
     phase: 1,
-    description: 'Você está avaliando o acesso geográfico e saneamento básico na rua principal da comunidade. Observa-se esgoto a céu aberto em alguns trechos e acúmulo de lixo nas calçadas.',
-    dialogues: [
-      'Agente de Saúde: "Doutor, muitos moradores aqui sofrem com infestações de vetores no verão por causa do lixo."',
-      'Líder Comunitário: "A prefeitura passa coletando o lixo apenas uma vez por semana nessa área."'
-    ],
-    question: {
-      text: 'Qual a principal ação de vigilância em saúde que a equipe de atenção básica deve articular neste cenário?',
-      options: [
-        'Prescrever antibióticos profiláticos para todos os moradores da rua.',
-        'Notificar a vigilância ambiental/sanitária municipal e mobilizar a comunidade para ações de educação em saúde e mutirão de limpeza.',
-        'Aconselhar os moradores a se mudarem para outra rua mais saneada.',
-        'Aguardar o surto de leptospirose para iniciar as ações médicas na UBS.'
-      ],
-      correctIndex: 1,
-      feedbackSuccess: 'Parabéns! Articular ações com a vigilância ambiental e engajar a comunidade em saneamento básico são pilares da Atenção Primária.',
-      feedbackError: 'Incorreto. A Atenção Primária atua de forma preventiva e coletiva antes que as doenças se instalem.'
-    }
+    description: 'Toda jornada começa pelo conhecimento do território. Nesta aventura, esse território é o Sistema Único de Saúde (SUS), a maior rede pública de saúde do Brasil e o cenário onde milhões de histórias acontecem todos os dias.\n\nAo longo do caminho, cada desafio revelará que cuidar da saúde vai muito além do diagnóstico: exige compreender pessoas, comunidades e diferentes realidades. Para avançar nas próximas missões, primeiro será preciso conhecer a história, os princípios e a organização do SUS. Afinal, nenhum grande explorador inicia sua jornada sem antes aprender a ler o mapa que irá guiá-lo.',
+    dialogues: []
   },
   'centro-comunitario': {
     id: 'centro-comunitario',
