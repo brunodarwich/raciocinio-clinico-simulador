@@ -33,20 +33,8 @@ function GameRouter() {
 function HeaderBar() {
   const { screen, player, score, completedScenarios, mainMapPlayerPos, extraMapPlayerPos, currentScenarioId } = useGame();
 
-  // On welcome or info, render a simple centralized logo
-  if (screen === 'welcome' || screen === 'info') {
-    return (
-      <header className="max-w-4xl mx-auto w-full text-center px-4 mb-4 select-none flex flex-col items-center gap-2">
-        <img 
-          src="/assets/script_logo-WD1wTJUs.svg" 
-          alt="Script Raciocínio Clínico" 
-          className="h-10 md:h-12 w-auto animate-fade-in"
-        />
-        <h2 className="text-[10px] md:text-xs text-slate-500 font-retro tracking-widest uppercase mt-1">
-          Simulador de Casos Clínicos e Vigilância à Saúde
-        </h2>
-      </header>
-    );
+  if (screen === 'welcome' || screen === 'info' || screen === 'tutorial') {
+    return null;
   }
 
   // Helper to determine the current title and subtitle based on positioning or scenario
@@ -137,6 +125,24 @@ function HeaderBar() {
   );
 }
 
+function GameFooter() {
+  const { screen } = useGame();
+
+  if (screen === 'welcome' || screen === 'info' || screen === 'tutorial') {
+    return null;
+  }
+
+  return (
+    <footer className="max-w-4xl mx-auto w-full text-center px-4 mt-8 select-none">
+      <p className="text-[9px] text-slate-600 font-mono leading-relaxed">
+        Pressione as teclas direcionais (WASD / Setas) ou use os direcionais virtuais na tela para caminhar pelo mapa.
+        <br />
+        © 2026 Script Raciocínio Clínico — Todos os direitos reservados.
+      </p>
+    </footer>
+  );
+}
+
 function App() {
   return (
     <GameProvider>
@@ -147,13 +153,7 @@ function App() {
           <GameRouter />
         </main>
 
-        <footer className="max-w-4xl mx-auto w-full text-center px-4 mt-8 select-none">
-          <p className="text-[9px] text-slate-600 font-mono leading-relaxed">
-            Pressione as teclas direcionais (WASD / Setas) ou use os direcionais virtuais na tela para caminhar pelo mapa.
-            <br />
-            © 2026 Script Raciocínio Clínico — Todos os direitos reservados.
-          </p>
-        </footer>
+        <GameFooter />
       </div>
     </GameProvider>
   );

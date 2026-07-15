@@ -18,7 +18,7 @@ export const InfoScreen: React.FC = () => {
   };
 
   return (
-    <div className="screen-transition flex flex-col items-center justify-center min-h-[500px] p-6">
+    <div className="login-screen-bg-override">
       <div className="retro-container max-w-md w-full flex flex-col gap-6">
         <h2 className="text-sm text-yellow-400 border-b border-slate-800 pb-3 mb-2 font-retro uppercase">
           Cadastro do Profissional
